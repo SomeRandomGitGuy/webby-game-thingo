@@ -1,0 +1,10 @@
+.seperator {
+    display: flex;
+}
+
+.map {
+    width: 700px;
+    height: 500px;
+    border: 2px solid black;
+    margin-right: 50px;
+}

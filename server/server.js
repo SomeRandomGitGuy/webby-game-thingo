@@ -1,11 +1,24 @@
-const { createServer } = require('node:http');
-const hostname = '127.0.0.1';
+import express from "express";
+import path from "path";
+import fs from "fs";
+
+const app = express();
 const port = 3636;
-const server = createServer((req, res) => {
-	res.statusCode = 200;
-	res.setHeader('Content-Type', 'text/plain');
-	res.end('Hello World');
+const rootDir = new URL("../public", import.meta.url).pathname;
+
+app.use(function (req, res, next) {
+	// resolve path
+	const requestedPath = path.normalize(path.join(rootDir, req.path));
+
+	if (!requestedPath.startsWith(rootDir)) {
+		return res.status(403).send("Forbidden");
+	}
+
+	next();
 });
-server.listen(port, hostname, () => {
-	console.log(`Server running at http://${hostname}:${port}/`);
+
+app.use(express.static(rootDir));
+
+app.listen(port, () => {
+	console.log(`Listening on port ${port}`)
 });
