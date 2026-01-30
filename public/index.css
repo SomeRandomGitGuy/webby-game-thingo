@@ -1,9 +1,16 @@
 .seperator {
     display: flex;
+    position: absolute;
+}
+
+body {
+    font-family: Arvo;
+    font-style: normal;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 h1 {
-    font-family: Georgia, 'Times New Roman', Times, serif;
     position: absolute;
     top: 0px;
     left: 20px;
@@ -16,23 +23,28 @@ h2 {
 
 .map {
     position: absolute;
-    width: 100vw;
-    height: 100vh;
-    border: 2px solid black;
-    background-color: darkolivegreen;
+    width: 100%;
+    height: 100%;
+    /* This is temporary, obv it will be a map not a gradient */
+    background: linear-gradient(45deg,rgba(160, 230, 149, 1) 0%, rgba(20, 74, 34, 1) 49%, rgba(87, 107, 87, 1) 100%);
     z-index: -5;
+    
+    left: 0%;
+    top: 0%;
 }
 
 .overlay {
+    top: 0%;
     position: absolute;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
 }
 
 .options-box {
     background-color: rgba(128, 128, 128,0.5);
     position: absolute;
-    width: 25vw;
-    height: 100vh;
-    left: 75vw;
+    top: 0%;
+    width: 25%;
+    height: 100%;
+    left: 75%;
 }
