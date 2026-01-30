@@ -30,7 +30,7 @@ h2 {
 }
 
 .options-box {
-    background-color: grey;
+    background-color: rgba(128, 128, 128,0.5);
     position: absolute;
     width: 25vw;
     height: 100vh;
