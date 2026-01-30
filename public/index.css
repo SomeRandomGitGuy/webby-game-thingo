@@ -2,9 +2,37 @@
     display: flex;
 }
 
+h1 {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    position: absolute;
+    top: 0px;
+}
+
+h2 {
+    margin: 10px;
+    position: absolute;
+}
+
 .map {
-    width: 700px;
-    height: 500px;
+    position: absolute;
+    width: 98vw;
+    height: 89vh;
+    top: 10vh;
     border: 2px solid black;
-    margin-right: 50px;
+    margin-right: 20px;
+}
+
+.overlay {
+    position: absolute;
+    width: 98vw;
+    height: 90vh;
+}
+
+.options-box {
+    background-color: grey;
+    position: absolute;
+    width: 23vw;
+    height: 89vh;
+    left: 75vw;
+    top: 10vh;
 }
