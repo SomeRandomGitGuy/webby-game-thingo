@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="">
+	<head>
+		<meta charset="utf-8">
+		<title>grid test</title>
+		<style>
+			img, body, main {
+				padding: 0;
+				margin: 0;
+				image-rendering: pixelated;
+			}
+
+			main {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+
+		</main>
+		<script>
+			const imgsrc = "<img src=\"public/images/tiles/farmland.png\">";
+			const main = document.getElementsByTagName("main")[0];
+			let inner = main.textContent;
+			for (let i = 0; i < 10000; i++) {
+				inner += imgsrc;
+			}
+			main.innerHTML = inner;
+		</script>
+	</body>
+</html>

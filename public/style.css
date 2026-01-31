@@ -12,7 +12,7 @@ body {
 
 h1 {
     position: absolute;
-    top: 0px;
+    top: 0;
     left: 20px;
 }
 
@@ -21,31 +21,44 @@ h2 {
     position: absolute;
 }
 
-.map {
+#map {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    /* This is temporary, obv it will be a map not a gradient */
-    background: linear-gradient(45deg,rgba(160, 230, 149, 1) 0%, rgba(20, 74, 34, 1) 49%, rgba(87, 107, 87, 1) 100%);
     z-index: -5;
     
-    left: 0%;
-    top: 0%;
+    left: 0;
+	top: 0;
+
+	image-rendering: pixelated;
 }
 
-.overlay {
+#ui {
     top: 0%;
     position: absolute;
     width: 100%;
     height: 100%;
+}
+
+#highlight {
+	background: #ffffff40;
+	position: absolute;
+	top: 0;
+	right: 0;
 }
 
 .options-box {
     background-color: rgba(128, 128, 128,0.5);
     position: absolute;
+<<<<<<< HEAD:public/index.css
     top: 3%;
     width: 25%;
     height: 94%;
     right: 2%;
     border-radius: 15px;
 }
+=======
+    top: 0;
+    width: 25%;
+    height: 100%;
+    left: 75%;
+}
+>>>>>>> 2188685 (can write to db/map.json through index.html and script.js):public/style.css
