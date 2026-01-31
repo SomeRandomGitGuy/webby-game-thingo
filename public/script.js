@@ -11,6 +11,7 @@ const tile_size = 16;
 
 const map_height = 100;
 const map_width = 100;
+let map_offset = { x: 0, y: 0 }
 let zoom, scale;
 const dpr = window.devicePixelRatio;
 function setZoom(value) {
@@ -77,15 +78,15 @@ function resizeCanvas() {
 function drawMap() {
 	for (let x = 0; x < map_width; x++) {
 		for (let y = 0; y < map_height; y++) {
-			ctx.drawImage(bitmaps[map_data[x][y]], tile_size*x, tile_size*y);
+			ctx.drawImage(bitmaps[map_data[x][y]], tile_size*x - map_offset.x, tile_size*y - map_offset.y);
 		}
 	}
 }
 
 async function main() {
 	getMapData();
-	bitmaps[0] = await getImageBitmap("/images/tiles/farmland.png");
-	bitmaps[1] = await getImageBitmap("/images/tiles/grass_patches.png");
+	bitmaps[1] = await getImageBitmap("/images/tiles/farmland.png");
+	bitmaps[0] = await getImageBitmap("/images/tiles/grass_patches.png");
 
 	resizeCanvas();
 
@@ -96,15 +97,16 @@ async function main() {
 
 main();
 
-document.onmousemove = (e) => {
+c.onmousemove = (e) => {
 	tile_hover.x = Math.floor(e.clientX / tile_size / dpr);
 	tile_hover.y = Math.floor(e.clientY / tile_size / dpr);
-	highlight.style.top = tile_hover.y * tile_size /(c.width / c.offsetWidth) + "px";
-	highlight.style.left = tile_hover.x * tile_size /(c.height / c.offsetHeight) + "px";
+	highlight.style.top = tile_hover.y * tile_size / (c.width / c.offsetWidth) + "px";
+	highlight.style.left = tile_hover.x * tile_size / (c.height / c.offsetHeight) + "px";
 }
 
 async function updateTile(x, y, value) {
 	try {
+		hover = { x: tile_hover.x, y: tile_hover.y };
 		const res = await fetch("/api/map", {
 			method: "POST",
 			headers: { "Content-Type": "application/json", "Accept": "adsfasdf" },
@@ -112,6 +114,10 @@ async function updateTile(x, y, value) {
 		});
 
 		if (!res.ok) { throw new Error(`Response status: ${res.status}`); }
+
+		map_data[hover.x][hover.y] = map_data[hover.x][hover.y] ? 0 : 1;
+		ctx.clearRect(hover.x*tile_size, hover.y*tile_size, tile_size, tile_size);
+		ctx.drawImage(bitmaps[map_data[hover.x][hover.y]], tile_size*hover.x, tile_size*hover.y);
 	} catch(e) {
 		console.error(e);
 		return null;
@@ -119,9 +125,29 @@ async function updateTile(x, y, value) {
 
 }
 
-document.onclick = () => {
-	map_data[tile_hover.x][tile_hover.y] = map_data[tile_hover.x][tile_hover.y] ? 0 : 1;
-	ctx.clearRect(0, 0, map_width*tile_size, map_height*tile_size)
-	drawMap();
+c.onmousedown = () => {
 	updateTile(tile_hover.x, tile_hover.y, map_data[tile_hover.x][tile_hover.y]);
+}
+
+c.mouseleave = () => { highlight.style.display = "none"; }
+c.mouseenter = () => { highlight.style.display = "block"; }
+
+window.onresize = () => { resizeCanvas(); }
+
+map_offsetCache = { x: 0, y: 0 };
+window.onwheel = (e) => {
+	map_offsetCache.x += e.deltaX;
+	map_offsetCache.y += e.deltaY;
+	const moveX = Math.trunc(map_offsetCache.x);
+	const moveY = Math.trunc(map_offsetCache.y);
+
+	if (map_offsetCache.x != 0 || map_offsetCache.y != 0) {
+		map_offsetCache.x -= moveX;
+		map_offsetCache.y -= moveY;
+		map_offset.x = Math.max(0, Math.min(map_offset.x + moveX, map_width * tile_size - c_width / scale))
+		map_offset.y = Math.max(0, Math.min(map_offset.y + moveY, map_width * tile_size - c_height / scale))
+
+		ctx.clearRect(0, 0, c_width, c_height);
+		drawMap();
+	}
 }

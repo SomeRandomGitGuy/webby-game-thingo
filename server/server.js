@@ -30,6 +30,7 @@ app.get('/api/map', (req, res) => {
 });
 
 app.use(express.json());
+
 app.use(express.static(rootDir));
 
 app.post("/api/:action", (req, res) => {
@@ -39,13 +40,10 @@ app.post("/api/:action", (req, res) => {
 			const raw = fs.readFileSync(map_path, "utf-8");
 			const data = JSON.parse(raw);
 
-			// Modify the data
 			const { x, y, value } = req.body;
-
 			if (!data[x]) { data[x] = {}; }
 			data[x][y] = value;
 
-			// Write it back
 			fs.writeFileSync(map_path, JSON.stringify(data, null, 2), "utf-8");
 			res.status(200).send("OK");
 		} catch (err) {

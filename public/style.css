@@ -1,57 +1,61 @@
 .seperator {
-    display: flex;
-    position: absolute;
+	display: flex;
+	position: absolute;
 }
 
 body {
-    font-family: Arvo;
-    font-style: normal;
-    overflow-x: hidden;
-    overflow-y: hidden;
+	font-family: Arvo;
+	font-style: normal;
+	overflow-x: hidden;
+	overflow-y: hidden;
 }
 
 h1 {
-    position: absolute;
-    top: 0;
-    left: 20px;
+	position: absolute;
+	top: 0;
+	left: 20px;
 }
 
 h2 {
-    margin: 15px;
-    position: absolute;
+	margin: 15px;
+	position: absolute;
 }
 
 #map {
-    position: absolute;
-    z-index: -5;
-    
-    left: 0;
+	position: absolute;
+	z-index: -5;
+
+	left: 0;
 	top: 0;
 
 	image-rendering: pixelated;
 }
 
 #ui {
-    top: 0%;
-    position: absolute;
-    width: 100%;
-    height: 100%;
+	top: 0%;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
 }
+
+#ui * { pointer-events: initial; }
 
 #highlight {
 	background: #ffffff40;
 	position: absolute;
 	top: 0;
 	right: 0;
+	pointer-events: none;
 }
 
 .options-box {
-    background-color: rgba(128, 128, 128,0.5);
-    position: absolute;
-    top: 3%;
-    width: 25%;
-    height: 94%;
-    right: 2%;
-    border-radius: 15px;
+	background-color: rgba(128, 128, 128,0.5);
+	position: absolute;
+	top: 3%;
+	width: 25%;
+	height: 94%;
+	right: 2%;
+	border-radius: 15px;
 }
 >>>>>>> 2188685 (can write to db/map.json through index.html and script.js):public/style.css
