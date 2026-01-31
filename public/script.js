@@ -14,12 +14,6 @@ const map_width = 100;
 let map_offset = { x: 0, y: 0 }
 let zoom, scale;
 const dpr = window.devicePixelRatio;
-function setZoom(value) {
-	zoom = value;
-	scale = dpr / zoom;
-	highlight.style.width = tile_size * dpr + "px";
-	highlight.style.height = tile_size * dpr + "px";
-}
 
 const c = docID("map");
 const ctx = c.getContext("2d");
@@ -46,7 +40,13 @@ async function getMapData() {
 	}
 }
 
-setZoom(2);
+function setZoom(value) {
+	zoom = value;
+	scale = dpr * zoom;
+	highlight.style.width = tile_size * scale + "px";
+	highlight.style.height = tile_size * scale + "px";
+}
+setZoom(1.38285);
 
 async function getImageBitmap(path) {
 	try {
@@ -66,8 +66,8 @@ async function getImageBitmap(path) {
 function resizeCanvas() {
 	c_width = window.innerWidth;
 	c_height = window.innerHeight;
-	c.width = c_width / scale / zoom;
-	c.height = c_height / scale / zoom;
+	c.width = c_width / scale;
+	c.height = c_height / scale;
 	c.style.width = c_width + "px";
 	c.style.height = c_height + "px";
 
@@ -85,8 +85,8 @@ function drawMap() {
 
 async function main() {
 	getMapData();
-	bitmaps[1] = await getImageBitmap("/images/tiles/farmland.png");
-	bitmaps[0] = await getImageBitmap("/images/tiles/grass_patches.png");
+	bitmaps[0] = await getImageBitmap("/images/tiles/farmland.png");
+	bitmaps[1] = await getImageBitmap("/images/tiles/grass_patches.png");
 
 	resizeCanvas();
 
@@ -98,10 +98,11 @@ async function main() {
 main();
 
 c.onmousemove = (e) => {
-	tile_hover.x = Math.floor(e.clientX / tile_size / dpr);
-	tile_hover.y = Math.floor(e.clientY / tile_size / dpr);
-	highlight.style.top = tile_hover.y * tile_size / (c.width / c.offsetWidth) + "px";
-	highlight.style.left = tile_hover.x * tile_size / (c.height / c.offsetHeight) + "px";
+	tile_hover.x = Math.floor((e.clientX+map_offset.x*scale) / tile_size / scale);
+	tile_hover.y = Math.floor((e.clientY+map_offset.y*scale) / tile_size / scale);
+	console.log(map_offset.x/tile_size)
+	highlight.style.top = (tile_hover.y-Math.floor(map_offset.y/tile_size)) * tile_size * scale - map_offset.y%tile_size*scale + "px";
+	highlight.style.left = (tile_hover.x-Math.floor(map_offset.x/tile_size)) * tile_size * scale - map_offset.x%tile_size*scale + "px";
 }
 
 async function updateTile(x, y, value) {
@@ -115,9 +116,9 @@ async function updateTile(x, y, value) {
 
 		if (!res.ok) { throw new Error(`Response status: ${res.status}`); }
 
-		map_data[hover.x][hover.y] = map_data[hover.x][hover.y] ? 0 : 1;
-		ctx.clearRect(hover.x*tile_size, hover.y*tile_size, tile_size, tile_size);
-		ctx.drawImage(bitmaps[map_data[hover.x][hover.y]], tile_size*hover.x, tile_size*hover.y);
+		map_data[hover.x][hover.y] = value;
+		ctx.clearRect((hover.x-Math.floor(map_offset.x/tile_size)) * tile_size - map_offset.x%tile_size, (hover.y-Math.floor(map_offset.y/tile_size)) * tile_size - map_offset.y%tile_size, tile_size, tile_size);
+		ctx.drawImage(bitmaps[map_data[hover.x][hover.y]], (hover.x-Math.floor(map_offset.x/tile_size)) * tile_size - map_offset.x%tile_size, (hover.y-Math.floor(map_offset.y/tile_size)) * tile_size - map_offset.y%tile_size);
 	} catch(e) {
 		console.error(e);
 		return null;
@@ -126,7 +127,7 @@ async function updateTile(x, y, value) {
 }
 
 c.onmousedown = () => {
-	updateTile(tile_hover.x, tile_hover.y, map_data[tile_hover.x][tile_hover.y]);
+	updateTile(tile_hover.x, tile_hover.y, map_data[tile_hover.x][tile_hover.y] ? 0 : 1);
 }
 
 c.mouseleave = () => { highlight.style.display = "none"; }
@@ -144,10 +145,11 @@ window.onwheel = (e) => {
 	if (map_offsetCache.x != 0 || map_offsetCache.y != 0) {
 		map_offsetCache.x -= moveX;
 		map_offsetCache.y -= moveY;
-		map_offset.x = Math.max(0, Math.min(map_offset.x + moveX, map_width * tile_size - c_width / scale))
-		map_offset.y = Math.max(0, Math.min(map_offset.y + moveY, map_width * tile_size - c_height / scale))
-
+		map_offset.x = Math.max(0, Math.min(map_offset.x + moveX, Math.floor(map_width * tile_size - c_width / scale)))
+		map_offset.y = Math.max(0, Math.min(map_offset.y + moveY, Math.floor(map_height * tile_size - c_height / scale)))
 		ctx.clearRect(0, 0, c_width, c_height);
 		drawMap();
 	}
+
+	c.onmousemove(e);
 }
