@@ -2,7 +2,7 @@
 
 
 async function getData() {
-  const url = "db/stocks.json";
+  const url = "/map.json";
   try {
     const response = await fetch(url);
     if (!response.ok) {
